@@ -135,6 +135,8 @@ function initWebSocket() {
       preSlide()
     } else if (data === 'RIGHT' || data === 'BOTTOM') {
       nextSlide()
+    } else if (data === 'EXIT') {
+      closeWindow()
     }
   }
 
