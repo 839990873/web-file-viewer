@@ -112,7 +112,7 @@ function initWebSocket() {
 
   //判断当前浏览器是否支持WebSocket（固定写法）
   if ('WebSocket' in window) {
-    websocket = new WebSocket('ws://localhost:8200/file-view/websocket/')
+    websocket = new WebSocket('ws://localhost:8200/file-view/websocket')
   } else {
     alert('浏览器不支持websocket')
   }
