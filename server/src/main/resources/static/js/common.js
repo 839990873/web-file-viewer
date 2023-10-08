@@ -1,5 +1,6 @@
 function closeWindow() {
-  if (firefox) {
+  const userAgent = navigator.userAgent
+  if (userAgent.indexOf('Firefox') > -1) {
     const opened = window.open('about:blank', '_self')
     opened.opener = null
     opened.close()
