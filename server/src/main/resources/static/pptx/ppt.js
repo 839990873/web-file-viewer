@@ -112,7 +112,7 @@ function initWebSocket() {
 
   //判断当前浏览器是否支持WebSocket（固定写法）
   if ('WebSocket' in window) {
-    websocket = new WebSocket('ws://localhost:8200/file-view/websocket')
+    websocket = new WebSocket(`ws://localhost:8200/file-view/websocket/${meetingId}`)
   } else {
     alert('浏览器不支持websocket')
   }
@@ -182,7 +182,7 @@ function resetContent() {
 
   // pages
   for (i = 0; i < totalSize; i++) {
-    var page = pages[i]
+    const page = pages[i]
     slideUrls[i] = page.url
     slideThumbUrls[i] = page.thumbUrl
     $('.row-fluid .span2').append('<div class="thumbnail" page="' + (i + 1) + '"><img src="' + page.thumbUrl + '"></div><div class="thumb-page-number-container">' + (i + 1) + '/' + slideCount + '</div>')

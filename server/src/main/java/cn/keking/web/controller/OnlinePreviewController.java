@@ -54,9 +54,8 @@ public class OnlinePreviewController {
         this.otherFilePreview = otherFilePreview;
     }
 
-    @GetMapping( "/onlinePreview")
-    public String onlinePreview(String url, Model model, HttpServletRequest req) {
-
+    @GetMapping("/onlinePreview")
+    public String onlinePreview(String url, Long meetingId, Model model, HttpServletRequest req) {
         String fileUrl;
         try {
             fileUrl = WebUtils.decodeUrl(url);
@@ -66,12 +65,13 @@ public class OnlinePreviewController {
         }
         FileAttribute fileAttribute = fileHandlerService.getFileAttribute(fileUrl, req);
         model.addAttribute("file", fileAttribute);
+        model.addAttribute("meetingId", meetingId);
         FilePreview filePreview = previewFactory.get(fileAttribute);
         logger.info("预览文件url：{}，previewType：{}", fileUrl, fileAttribute.getType());
         return filePreview.filePreviewHandle(fileUrl, model, fileAttribute);
     }
 
-    @GetMapping( "/picturesPreview")
+    @GetMapping("/picturesPreview")
     public String picturesPreview(String urls, Model model, HttpServletRequest req) {
         String fileUrls;
         try {
@@ -90,7 +90,7 @@ public class OnlinePreviewController {
         String currentUrl = req.getParameter("currentUrl");
         if (StringUtils.hasText(currentUrl)) {
             String decodedCurrentUrl = new String(Base64.decodeBase64(currentUrl));
-                   decodedCurrentUrl = KkFileUtils.htmlEscape(decodedCurrentUrl);   // 防止XSS攻击
+            decodedCurrentUrl = KkFileUtils.htmlEscape(decodedCurrentUrl);   // 防止XSS攻击
             model.addAttribute("currentUrl", decodedCurrentUrl);
         } else {
             model.addAttribute("currentUrl", imgUrls.get(0));
@@ -110,7 +110,7 @@ public class OnlinePreviewController {
         try {
             urlPath = WebUtils.decodeUrl(urlPath);
         } catch (Exception ex) {
-            logger.error(String.format(BASE64_DECODE_ERROR_MSG, urlPath),ex);
+            logger.error(String.format(BASE64_DECODE_ERROR_MSG, urlPath), ex);
             return;
         }
         HttpURLConnection urlcon = null;
@@ -122,50 +122,51 @@ public class OnlinePreviewController {
             return;
         }
         logger.info("下载跨域pdf文件url：{}", urlPath);
-        if (!urlPath.toLowerCase().startsWith("ftp:")){
+        if (!urlPath.toLowerCase().startsWith("ftp:")) {
             try {
                 URL url = WebUtils.normalizedURL(urlPath);
-                urlcon=(HttpURLConnection)url.openConnection();
+                urlcon = (HttpURLConnection) url.openConnection();
                 urlcon.setConnectTimeout(30000);
                 urlcon.setReadTimeout(30000);
                 urlcon.setInstanceFollowRedirects(false);
                 int responseCode = urlcon.getResponseCode();
-                if ( responseCode == 403  || responseCode == 500) { //403  500
-                    logger.error("读取跨域文件异常，url：{}，错误：{}", urlPath,responseCode);
-                    return ;
+                if (responseCode == 403 || responseCode == 500) { //403  500
+                    logger.error("读取跨域文件异常，url：{}，错误：{}", urlPath, responseCode);
+                    return;
                 }
                 if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) { //301 302
-                    url =new URL(urlcon.getHeaderField("Location"));
-                    urlcon=(HttpURLConnection)url.openConnection();
-                } if (responseCode  == 404 ) {  //404
+                    url = new URL(urlcon.getHeaderField("Location"));
+                    urlcon = (HttpURLConnection) url.openConnection();
+                }
+                if (responseCode == 404) {  //404
                     try {
                         urlStr = URLDecoder.decode(urlPath, StandardCharsets.UTF_8.name());
                         urlStr = URLDecoder.decode(urlStr, StandardCharsets.UTF_8.name());
                         url = WebUtils.normalizedURL(urlStr);
-                        urlcon=(HttpURLConnection)url.openConnection();
+                        urlcon = (HttpURLConnection) url.openConnection();
                         urlcon.setConnectTimeout(30000);
                         urlcon.setReadTimeout(30000);
                         urlcon.setInstanceFollowRedirects(false);
                         responseCode = urlcon.getResponseCode();
                         if (responseCode == HttpURLConnection.HTTP_MOVED_PERM || responseCode == HttpURLConnection.HTTP_MOVED_TEMP) { //301 302
-                            url =new URL(urlcon.getHeaderField("Location"));
+                            url = new URL(urlcon.getHeaderField("Location"));
                         }
-                        if(responseCode == 404 ||responseCode  == 403  || responseCode == 500 ){
-                            logger.error("读取跨域文件异常，url：{}，错误：{}", urlPath,responseCode);
-                            return ;
+                        if (responseCode == 404 || responseCode == 403 || responseCode == 500) {
+                            logger.error("读取跨域文件异常，url：{}，错误：{}", urlPath, responseCode);
+                            return;
                         }
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
-                    }finally {
+                    } finally {
                         assert urlcon != null;
                         urlcon.disconnect();
                     }
                 }
-                    if(urlPath.contains( ".svg")) {
-                        response.setContentType("image/svg+xml");
-                    }
-                    inputStream=(url).openStream();
-                    IOUtils.copy(inputStream, response.getOutputStream());
+                if (urlPath.contains(".svg")) {
+                    response.setContentType("image/svg+xml");
+                }
+                inputStream = (url).openStream();
+                IOUtils.copy(inputStream, response.getOutputStream());
 
             } catch (IOException | GalimatiasParseException e) {
                 logger.error("读取跨域文件异常，url：{}", urlPath);
@@ -177,7 +178,7 @@ public class OnlinePreviewController {
         } else {
             try {
                 URL url = WebUtils.normalizedURL(urlPath);
-                if(urlPath.contains(".svg")) {
+                if (urlPath.contains(".svg")) {
                     response.setContentType("image/svg+xml");
                 }
                 inputStream = (url).openStream();

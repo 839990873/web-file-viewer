@@ -1,5 +1,6 @@
 [#ftl]
 [#-- @implicitly included --]
+[#-- @ftlvariable name="meetingId" type="java.lang.Number" --]
 [#-- @ftlvariable name="initializeMemorySize" type="java.lang.Number" --]
 [#-- @ftlvariable name="currentUrl" type="java.lang.String" --]
 [#-- @ftlvariable name="file" type="cn.keking.model.FileAttribute" --]

@@ -10,12 +10,12 @@
     <link href="pptx/jquery.contextMenu.css" rel="stylesheet">
     <#--  手机端预览兼容  -->
     <script type="text/javascript">
-        var windowWidth = document.documentElement.clientWidth;
-        var searchStr = window.location.search.substr(1);
-        if ((windowWidth < 768 || (/micromessenger/.test(navigator.userAgent.toLowerCase()))) && (!searchStr || searchStr.indexOf('type=') < 0)) {
-            var redirectUrl = window.location.pathname + '?type=mobile' + (!!searchStr ? ('&' + searchStr) : '');
-            window.location.replace(redirectUrl);
-        }
+      const windowWidth = document.documentElement.clientWidth
+      const searchStr = window.location.search.substr(1)
+      if ((windowWidth < 768 || (/micromessenger/.test(navigator.userAgent.toLowerCase()))) && (!searchStr || searchStr.indexOf('type=') < 0)) {
+        const redirectUrl = window.location.pathname + '?type=mobile' + (!!searchStr ? ('&' + searchStr) : '')
+        window.location.replace(redirectUrl)
+      }
     </script>
 
     <!--[if lt IE 9]>
@@ -87,60 +87,61 @@
 <script src="pptx/jquery.mobile-events.min.js"></script>
 <script src="pptx/ppt.js"></script>
 <script>
-    var resultData = {
-        "code": 1,
-        "name": "PPT预览",
-        "totalSize": ${imgUrls ? size},
-        "curPage": 1,
-        "totalPage": 1,
-        "pageSize": 10,
-        "titles": null,
-        "data": [
-            <#assign index = 0>
-            <#list imgUrls as img>
-            <#if index != 0>, </#if>{
-                "uuid": null,
-                "title": null,
-                "content": null,
-                "text": null,
-                "url": "${img}",
-                "destFile": null,
-                "viewCount": 0,
-                "downloadCount": 0,
-                "ctime": null,
-                "thumbUrl": "${img}",
-                "largeUrl": null,
-                "ratio": 0.5625,
-                "note": null
-            }<#assign index = index + 1>
-            </#list>],
-        "desc": "Success"
-    }
+  const meetingId = ${meetingId}
+  const resultData = {
+    'code': 1,
+    'name': 'PPT预览',
+    'totalSize': ${imgUrls ? size},
+    'curPage': 1,
+    'totalPage': 1,
+    'pageSize': 10,
+    'titles': null,
+    'data': [
+      <#assign index = 0>
+      <#list imgUrls as img>
+      <#if index != 0>, </#if>{
+        'uuid': null,
+        'title': null,
+        'content': null,
+        'text': null,
+        'url': "${img}",
+        'destFile': null,
+        'viewCount': 0,
+        'downloadCount': 0,
+        'ctime': null,
+        'thumbUrl': "${img}",
+        'largeUrl': null,
+        'ratio': 0.5625,
+        'note': null
+      }<#assign index = index + 1>
+      </#list>],
+    'desc': 'Success'
+  }
 
-    var contextPath = '';
-    var version = '12';
-    // var urlObj = $.url($.url().attr('source').replace(contextPath, ''));
-    var id = window.location.pathname.replace(contextPath, '').split('/')[2];
-    var uuid = id;
-    var params = getAllUrlParams(window.location.href); // 如果用urlObj.param()方法获取则被非正常解码
-    // var queryStr = urlObj.attr('query'); // 参数被decode，IE下如果有中文参数则报错，需要获取原生参数
-    var queryStr = window.location.search.slice(1);
-    uuid = !!'' ? '' : uuid;
-    var name = 'pptx';
-    if (!!name) {
-        params.name = name;
-    }
-    var reqUrl = '';
-    var reqUrlMd5 = '';
-    var authMap = '{}';
-    var authMapStr = 'null';
-    if (!!reqUrlMd5 && !!authMapStr) {
-        authMap = JSON.parse(authMapStr);
-    }
+  const contextPath = ''
+  const version = '12'
+  // var urlObj = $.url($.url().attr('source').replace(contextPath, ''));
+  const id = window.location.pathname.replace(contextPath, '').split('/')[2]
+  let uuid = id
+  const params = getAllUrlParams(window.location.href) // 如果用urlObj.param()方法获取则被非正常解码
+  // var queryStr = urlObj.attr('query'); // 参数被decode，IE下如果有中文参数则报错，需要获取原生参数
+  const queryStr = window.location.search.slice(1)
+  uuid = !!'' ? '' : uuid
+  const name = 'pptx'
+  if (!!name) {
+    params.name = name
+  }
+  const reqUrl = ''
+  const reqUrlMd5 = ''
+  let authMap = '{}'
+  const authMapStr = 'null'
+  if (!!reqUrlMd5 && !!authMapStr) {
+    authMap = JSON.parse(authMapStr)
+  }
 
-    window.onload = function () {
-        initWaterMark();
-    }
+  window.onload = function () {
+    initWaterMark()
+  }
 </script>
 </body>
 </html>
