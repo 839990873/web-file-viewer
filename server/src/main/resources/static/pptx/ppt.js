@@ -104,13 +104,57 @@ $(document).ready(function () {
   } catch (err) {
 
   }
+  initWebSocket()
 })
+
+function initWebSocket() {
+  let websocket = null
+
+  //判断当前浏览器是否支持WebSocket（固定写法）
+  if ('WebSocket' in window) {
+    websocket = new WebSocket('ws://localhost:8200/file-view/websocket/')
+  } else {
+    alert('浏览器不支持websocket')
+  }
+
+  //连接发生错误的回调方法
+  websocket.onerror = function () {
+    console.log('发生错误')
+  }
+
+  //连接成功建立的回调方法
+  websocket.onopen = function (event) {
+    console.log('建立连接' + event)
+  }
+
+  //接收到消息的回调方法
+  websocket.onmessage = function (event) {
+    const data = event.data
+    console.log(data)
+    if (data === 'LEFT' || data === 'TOP') {
+      preSlide()
+    } else if (data === 'RIGHT' || data === 'BOTTOM') {
+      nextSlide()
+    }
+  }
+
+  //连接关闭的回调方法
+  websocket.onclose = function () {
+    console.log('关闭连接')
+  }
+
+  //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+  window.onbeforeunload = function () {
+    alert('已关闭连接')
+    websocket.close()
+  }
+}
 
 let remainContentInterval
 
 function checkRemainContent() {
   clearInterval(remainContentInterval)
-  if (slideCount == totalSize) {
+  if (slideCount === totalSize) {
     return
   }
 
@@ -206,11 +250,11 @@ function resetImgSize() {
 }
 
 $(document).keydown(function (event) {
-  if (event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 33) {	// 37 left, 38 up, 33 pageUp
+  if (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 33) {	// 37 left, 38 up, 33 pageUp
     preSlide()
-  } else if (event.keyCode == 39 || event.keyCode == 40 || event.keyCode == 32 || event.keyCode == 34) {	// 39 right, 40 down, 32 space, 34 pageDown
+  } else if (event.keyCode === 39 || event.keyCode === 40 || event.keyCode === 32 || event.keyCode === 34) {	// 39 right, 40 down, 32 space, 34 pageDown
     nextSlide()
-  } else if (event.keyCode == 13) {
+  } else if (event.keyCode === 13) {
     screenfull.toggle($('.slide-img-container')[0])
   }
 })
@@ -220,7 +264,7 @@ function getCurSlide() {
 }
 
 function preSlide() {
-  var preSlide = eval(Number(getCurSlide()) - 1)
+  const preSlide = eval(Number(getCurSlide()) - 1)
   gotoSlide(preSlide)
 }
 
