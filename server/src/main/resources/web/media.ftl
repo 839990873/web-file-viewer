@@ -6,6 +6,7 @@
     <#include "*/commonHeader.ftl">
     <link rel="stylesheet" href="plyr/plyr.css" />
     <script type="text/javascript" src="plyr/plyr.js"></script>
+    <script src="js/common.js"></script>
     <style>
         body {
             background-color: #404040;
