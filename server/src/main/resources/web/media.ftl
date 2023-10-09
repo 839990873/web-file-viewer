@@ -19,12 +19,15 @@
 </head>
 <body>
 <div class="m">
-    <video>
+    <video id="player">
         <source src="${mediaUrl}" />
     </video>
 </div>
 <script>
-  const player = plyr.setup()[0]
+  const player = new Plyr('#player', {
+    autoplay: true,
+    volume: 0
+  })
   window.onload = function () {
     initWaterMark()
     initWebSocket()
@@ -59,13 +62,11 @@
       } else if (data === 'RIGHT') {
         player.forward()
       } else if (data === 'BOTTOM') {
-        player.decreaseVolume()
+        player.decreaseVolume(0.1)
       } else if (data === 'TOP') {
-        player.increaseVolume()
+        player.increaseVolume(0.1)
       } else if (data === 'CONFIRM') {
         player.togglePlay()
-      } else if (data === 'FULL_SCREEN') {
-        player.fullscreen.toggle()
       } else if (data === 'EXIT') {
         closeWindow()
       }
